@@ -12,7 +12,7 @@ def reply_mail(index, title, content):
     url = base_url + "/mail/inbox/reply/" + str(index) + ".json"
     data = {'oauth_token': access_token, 'title': title, 'content': content, 'backup': 1}
     request_post(url, data)
-    print(title + ":" + content)
+    # print(title + ":" + content)
 
 
 def dy(user, content, index):
@@ -92,11 +92,15 @@ def handle_mail():
     inbox = json.loads(request_get(base_url + "/mail/inbox" + token_param + access_token))
     for mail in inbox['mail']:
         mail_info = json.loads(request_get(base_url + "/mail/inbox/" + str(mail['index']) + token_param + access_token))
-        content = mail_info['content'].split()
-        if content[0] == "DY" or content[0] == "dy":
-            dy(mail_info['user']['id'], content, mail_info['index'])
-        elif content[0] == "TD" or content[0] == "td":
-            td(mail_info['user']['id'], content, mail_info['index'])
+        con_str = mail_info['content'].partition(u"【")
+        content = con_str[0].split()
+        if len(content) > 0:
+            if content[0] == "DY" or content[0] == "dy":
+                dy(mail_info['user']['id'], content, mail_info['index'])
+            elif content[0] == "TD" or content[0] == "td":
+                td(mail_info['user']['id'], content, mail_info['index'])
+            else:
+                intro(mail['index'])
         else:
             intro(mail['index'])
         data = {'oauth_token': access_token}
