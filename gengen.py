@@ -18,9 +18,9 @@ sections = []
 log_string = ""
 id_list = []
 
-reply_content = """专业论坛机器人  v1.1 修复了一些小bug
-想每天掌握关心的人的最新发帖吗？专业论坛机器人帮你实现！给本账号发站内信获取使用方法，马上开启论坛新玩法！
-【持续研发中  欢迎提出建议及反馈bug】"""
+reply_content = """全新智能化专业论坛机器人  v2.0  震撼上线
+可随意调戏的机器人来了！只要直接回复我或者at我，我就会跟你聊天哟！试试问我："你能干什么？""讲个笑话"
+向我发送站内信获取更多功能使用方法"""
 
 
 # reply_content = "专业论坛机器人，新功能研发中，敬请期待"
@@ -38,6 +38,13 @@ def request_get(url):
         res = res_data.read()
         # print(res)
         return res
+
+
+def request_get_throw_error(url):
+    request = urllib2.Request(url)
+    res_data = urllib2.urlopen(request)
+    res = res_data.read()
+    return res
 
 
 def request_post(url, data):
@@ -87,7 +94,8 @@ def search_article(board, name, result_list, page=1):
     for each_article in search_result['article']:
         url_c = base_url + "/article/" + board + "/" + str(each_article['id']) + token_param + access_token
         art_detail = json.loads(request_get(url_c))
-        con = art_detail['content'].split()
+        con = art_detail['content'].partition("--")
+        con = con[0].partition(u"【")
         st = u"标题：" + art_detail['title'] + "\n" + con[0] + "\n" \
              + "[url=https://bbs.byr.cn/#!article/" + board + "/" + str(art_detail['group_id']) + "?s=" + str(
             art_detail['id']) + u"][color=#0000FF]点击打开原帖[/color][/url]\n"
